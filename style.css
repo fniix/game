@@ -55,26 +55,77 @@ body {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-@media (max-width: 640px) {
+#orientation-warning {
+  display: none;
+}
+
+@media (max-width: 800px) {
   body {
     padding: 0;
   }
-
+  
   #game-wrapper {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
   }
 
   #game-container {
     border-radius: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #footer {
+    display: none; /* Hide footer on mobile to maximize game area */
   }
 
   .button-text {
     font-size: 20px;
   }
 }
+
+/* Portrait mode warning for mobile phones */
+@media screen and (max-width: 800px) and (orientation: portrait) {
+  #game-wrapper {
+    display: none !important;
+  }
+
+  #orientation-warning {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #08132a;
+    color: #ffffff;
+    font-size: 22px;
+    text-align: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+
+  .warning-content p {
+    margin: 10px 0;
+  }
+  
+  .warning-content p:first-child {
+    font-size: 50px;
+    animation: rotatePhone 1.5s infinite ease-in-out alternate;
+  }
+}
+
+@keyframes rotatePhone {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-90deg); }
+}
+
