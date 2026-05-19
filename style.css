@@ -57,7 +57,21 @@ body {
 
 @media (max-width: 640px) {
   body {
-    padding: 12px;
+    padding: 0;
+  }
+
+  #game-wrapper {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  #game-container {
+    border-radius: 0;
+    width: 100%;
+    height: auto;
   }
 
   .button-text {

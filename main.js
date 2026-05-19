@@ -227,15 +227,66 @@ class GameScene extends Phaser.Scene {
       this.isMusicPlaying = true;
       this.backgroundMusic.setMute(this.sound.mute);
     }
+
+    // Add touch controls for mobile
+    this.addTouchControls();
+  }
+
+  addTouchControls() {
+    this.leftDown = false;
+    this.rightDown = false;
+    
+    // We add multi-touch capability (so you can run and jump at the same time)
+    this.input.addPointer(2);
+    
+    // Left Button
+    const leftBtn = this.add.circle(80, 460, 50, 0xffffff, 0.2).setInteractive();
+    this.add.text(80, 460, '◀', { fontSize: '40px', color: '#ffffff' }).setOrigin(0.5);
+    leftBtn.on('pointerdown', () => { this.leftDown = true; leftBtn.setAlpha(0.5); });
+    leftBtn.on('pointerup', () => { this.leftDown = false; leftBtn.setAlpha(1); });
+    leftBtn.on('pointerout', () => { this.leftDown = false; leftBtn.setAlpha(1); });
+
+    // Right Button
+    const rightBtn = this.add.circle(210, 460, 50, 0xffffff, 0.2).setInteractive();
+    this.add.text(210, 460, '▶', { fontSize: '40px', color: '#ffffff' }).setOrigin(0.5);
+    rightBtn.on('pointerdown', () => { this.rightDown = true; rightBtn.setAlpha(0.5); });
+    rightBtn.on('pointerup', () => { this.rightDown = false; rightBtn.setAlpha(1); });
+    rightBtn.on('pointerout', () => { this.rightDown = false; rightBtn.setAlpha(1); });
+
+    // Jump Button
+    const jumpBtn = this.add.circle(820, 460, 50, 0xffffff, 0.2).setInteractive();
+    this.add.text(820, 460, '▲', { fontSize: '40px', color: '#ffffff' }).setOrigin(0.5);
+    jumpBtn.on('pointerdown', () => { this.handleJump(); jumpBtn.setAlpha(0.5); });
+    jumpBtn.on('pointerup', () => { jumpBtn.setAlpha(1); });
+    jumpBtn.on('pointerout', () => { jumpBtn.setAlpha(1); });
+  }
+
+  handleJump() {
+    if (this.player.body.onFloor()) {
+      this.player.setVelocityY(-480);
+      if (this.jumpSound) {
+        this.jumpSound.play();
+      }
+    } else if (this.canDoubleJump) {
+      this.player.setVelocityY(-480);
+      this.canDoubleJump = false;
+      if (this.doubleJumpSound) {
+        this.doubleJumpSound.play();
+      } else if (this.jumpSound) {
+        this.jumpSound.play();
+      }
+    }
   }
 
   update() {
     const speed = 220;
 
-    if (this.cursors.left.isDown) {
+    if (this.cursors.left.isDown || this.leftDown) {
       this.player.setVelocityX(-speed);
-    } else if (this.cursors.right.isDown) {
+      this.player.setFlipX(true);
+    } else if (this.cursors.right.isDown || this.rightDown) {
       this.player.setVelocityX(speed);
+      this.player.setFlipX(false);
     } else {
       this.player.setVelocityX(0);
     }
@@ -245,20 +296,7 @@ class GameScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.jumpKey)) {
-      if (this.player.body.onFloor()) {
-        this.player.setVelocityY(-480);
-        if (this.jumpSound) {
-          this.jumpSound.play();
-        }
-      } else if (this.canDoubleJump) {
-        this.player.setVelocityY(-480);
-        this.canDoubleJump = false;
-        if (this.doubleJumpSound) {
-          this.doubleJumpSound.play();
-        } else if (this.jumpSound) {
-          this.jumpSound.play();
-        }
-      }
+      this.handleJump();
     }
   }
 
